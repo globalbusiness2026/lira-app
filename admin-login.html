@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - LIRA</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e1e2f 0%, #2d2d44 100%);
+        }
+        
+        .admin-login-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 50px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.5s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .admin-header .logo {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .admin-header h2 {
+            color: var(--dark);
+            font-size: 24px;
+        }
+        
+        .admin-header p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f0f0f0;
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin: 20px 0;
+            font-size: 12px;
+        }
+        
+        .security-badge i {
+            color: var(--success);
+        }
+        
+        .admin-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-link a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .back-link a:hover {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-login-container">
+        <div class="admin-login-card">
+            <div class="admin-header">
+                <div class="logo">LIRA</div>
+                <h2>Admin Panel</h2>
+                <p>Secure access for administrators only</p>
+            </div>
+            
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secured with 256-bit encryption</span>
+            </div>
+            
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label class="form-label">Admin User ID</label>
+                    <input type="text" class="form-control" id="userId" placeholder="Enter admin ID" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter password" required>
+                </div>
+                
+                <button type="submit" class="admin-btn" id="loginBtn">
+                    <span id="btnText">Access Admin Panel</span>
+                    <span id="btnLoader" style="display: none;"><i class="fas fa-spinner fa-spin"></i> Verifying...</span>
+                </button>
+            </form>
+            
+            <div class="back-link">
+                <a href="/"><i class="fas fa-arrow-left"></i> Back to Main Site</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userId = document.getElementById('userId').value;
+            const password = document.getElementById('password').value;
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            
+            try {
+                loginBtn.disabled = true;
+                btnText.style.display = 'none';
+                btnLoader.style.display = 'inline-block';
+                
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = '/admin-dashboard';
+                } else {
+                    alert(data.error || 'Invalid credentials');
+                    loginBtn.disabled = false;
+                    btnText.style.display = 'inline-block';
+                    btnLoader.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login failed');
+                loginBtn.disabled = false;
+                btnText.style.display = 'inline-block';
+                btnLoader.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
