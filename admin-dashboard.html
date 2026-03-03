@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Admin Dashboard - LIRA</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-container {
+            max-width: 1600px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #1e1e2f 0%, #2d2d44 100%);
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 30px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .admin-welcome h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .admin-welcome p {
+            opacity: 0.8;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .admin-btn {
+            padding: 12px 25px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .admin-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .admin-btn i {
+            margin-right: 8px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .stat-content {
+            text-align: right;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .stat-change {
+            font-size: 12px;
+            color: var(--success);
+            margin-top: 5px;
+        }
+        
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .chart-actions select {
+            padding: 8px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .recent-activities {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        
+        .activity-list {
+            margin-top: 20px;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+        
+        .activity-item:hover {
+            background: #f8f9fa;
+            transform: translateX(10px);
+            border-radius: 10px;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .quick-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .quick-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .quick-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quick-title i {
+            color: var(--primary);
+        }
+        
+        .top-buyers-list {
+            list-style: none;
+        }
+        
+        .top-buyer-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .buyer-rank {
+            width: 30px;
+            height: 30px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .buyer-info {
+            flex: 1;
+        }
+        
+        .buyer-name {
+            font-weight: 600;
+        }
+        
+        .buyer-amount {
+            font-size: 14px;
+            color: var(--success);
+        }
+        
+        .franchise-stage-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .stage-circle {
+            text-align: center;
+        }
+        
+        .circle-value {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .circle-micro {
+            background: #c7d2fe;
+            color: var(--primary-dark);
+        }
+        
+        .circle-mini {
+            background: #fed7aa;
+            color: var(--warning);
+        }
+        
+        .circle-max {
+            background: #fecaca;
+            color: var(--danger);
+        }
+        
+        .renewal-alert {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .alert-icon {
+            font-size: 24px;
+        }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .alert-count {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        @media (max-width: 992px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-value {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- Admin Navbar -->
+    <nav class="navbar" style="background: #1e1e2f;">
+        <div class="navbar-container">
+            <a href="/admin-dashboard" class="logo" style="color: white;">LIRA Admin</a>
+            <div class="mobile-menu-btn" style="color: white;">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="nav-menu">
+                <a href="/admin-dashboard" class="nav-link active" style="color: white;">Dashboard</a>
+                <a href="/all-member" class="nav-link" style="color: white;">Members</a>
+                <a href="/add-product" class="nav-link" style="color: white;">Products</a>
+                <a href="/payout" class="nav-link" style="color: white;">Payouts</a>
+                <a href="/admin-franchise" class="nav-link" style="color: white;">Franchise</a>
+                <a href="/admin-message" class="nav-link" style="color: white;">
+                    <i class="fas fa-comment"></i>
+                    <span class="message-badge" id="unreadCount">0</span>
+                </a>
+                <div class="nav-link" onclick="logout()" style="cursor: pointer; color: white;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Admin Header -->
+        <div class="admin-header">
+            <div class="admin-welcome">
+                <h1>Welcome back, Admin</h1>
+                <p>Here's what's happening with your platform today</p>
+            </div>
+            <div class="admin-actions">
+                <button class="admin-btn" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="admin-btn" onclick="exportReport()">
+                    <i class="fas fa-download"></i> Export Report
+                </button>
+                <button class="admin-btn" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i> Notifications
+                    <span class="badge" id="notificationBadge">3</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid" id="statsGrid">
+            <!-- Stats will be loaded here -->
+            <div class="loader"></div>
+        </div>
+
+        <!-- Renewal Alert -->
+        <div class="renewal-alert" id="renewalAlert">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-content">
+                <div class="alert-title">Accounts Expiring Today</div>
+                <div class="alert-count" id="expiringCount">0 members</div>
+            </div>
+            <button class="btn btn-primary" onclick="viewExpiring()">View</button>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Income Overview</div>
+                    <div class="chart-actions">
+                        <select onchange="changeIncomePeriod(this.value)">
+                            <option value="week">Last 7 Days</option>
+                            <option value="month" selected>Last 30 Days</option>
+                            <option value="year">Last 12 Months</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="incomeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Member Growth</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="memberChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Sections -->
+        <div class="quick-sections">
+            <!-- Top 10 Buyers -->
+            <div class="quick-card">
+                <div class="quick-title">
+                    <i class="fas fa-trophy"></i> Top 10 Buyers
+                </div>
+                <ul class="top-buyers-list" id="topBuyersList">
+                    <!-- Will be populated -->
+                </ul>
+            </div>
+
+            <!-- Franchise Stages -->
+            <div class="quick-card">
+                <div class="quick-title">
+                    <i class="fas fa-store"></i> Franchise Distribution
+                </div>
+                <div class="franchise-stage-stats" id="franchiseStages">
+                    <!-- Will be populated -->
+                </div>
+            </div>
+
+            <!-- Pending Approvals -->
+            <div class="quick-card">
+                <div class="quick-title">
+                    <i class="fas fa-clock"></i> Pending Approvals
+                </div>
+                <div class="pending-stats" id="pendingStats">
+                    <!-- Will be populated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="recent-activities">
+            <div class="chart-header">
+                <div class="chart-title">Recent Activities</div>
+                <button class="btn btn-outline" onclick="viewAllActivities()">View All</button>
+            </div>
+            <div class="activity-list" id="activityList">
+                <!-- Activities will be loaded here -->
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        let incomeChart = null;
+        let memberChart = null;
+        
+        // Check authentication
+        async function checkAuth() {
+            const session = await fetch('/api/session').then(r => r.json());
+            if (!session.loggedIn || session.role !== 'admin') {
+                window.location.href = '/admin-login';
+                return false;
+            }
+            return true;
+        }
+        
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/admin/dashboard');
+                const data = await response.json();
+                
+                updateStats(data);
+                updateCharts(data);
+                updateTopBuyers(data.topBuyers);
+                updateFranchiseStages(data.franchise);
+                updatePendingStats(data);
+                updateActivities(data.activities);
+                updateExpiringAlert(data.expiringCount);
+                
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+        
+        // Update stats
+        function updateStats(data) {
+            const statsGrid = document.getElementById('statsGrid');
+            
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">${data.users.total}</div>
+                        <div class="stat-label">Total Members</div>
+                        <div class="stat-change">+${data.users.todayJoins} today</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">${data.users.active}</div>
+                        <div class="stat-label">Active Members</div>
+                        <div class="stat-change">${data.users.inactive} inactive</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-rupee-sign"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">₹${(data.purchases.total / 100000).toFixed(1)}L</div>
+                        <div class="stat-label">Total Purchase</div>
+                        <div class="stat-change">₹${(data.purchases.today / 1000).toFixed(1)}K today</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-store"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">${data.franchise.total}</div>
+                        <div class="stat-label">Total Franchise</div>
+                        <div class="stat-change">${data.franchise.todayBuy} new today</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-truck"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">${data.deliveries.total}</div>
+                        <div class="stat-label">Deliveries</div>
+                        <div class="stat-change">${data.deliveries.pending} pending</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">₹${(data.income.total / 100000).toFixed(1)}L</div>
+                        <div class="stat-label">Total Income</div>
+                        <div class="stat-change">₹${(data.income.today / 1000).toFixed(1)}K today</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Update charts
+        function updateCharts(data) {
+            // Income Chart
+            const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+            if (incomeChart) incomeChart.destroy();
+            
+            incomeChart = new Chart(incomeCtx, {
+                type: 'line',
+                data: {
+                    labels: data.incomeChart?.labels || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Income',
+                        data: data.incomeChart?.values || [0, 0, 0, 0, 0, 0, 0],
+                        borderColor: '#8B5CF6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // Member Chart
+            const memberCtx = document.getElementById('memberChart').getContext('2d');
+            if (memberChart) memberChart.destroy();
+            
+            memberChart = new Chart(memberCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Active', 'Inactive'],
+                    datasets: [{
+                        data: [data.users.active, data.users.inactive],
+                        backgroundColor: ['#10B981', '#EF4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Update top buyers
+        function updateTopBuyers(buyers) {
+            const list = document.getElementById('topBuyersList');
+            
+            if (!buyers || buyers.length === 0) {
+                list.innerHTML = '<li>No data available</li>';
+                return;
+            }
+            
+            list.innerHTML = buyers.map((buyer, index) => `
+                <li class="top-buyer-item">
+                    <div class="buyer-rank">${index + 1}</div>
+                    <div class="buyer-info">
+                        <div class="buyer-name">${buyer.name}</div>
+                        <div class="buyer-id">${buyer.userId}</div>
+                    </div>
+                    <div class="buyer-amount">₹${buyer.totalPurchase.toLocaleString()}</div>
+                </li>
+            `).join('');
+        }
+        
+        // Update franchise stages
+        function updateFranchiseStages(franchise) {
+            const container = document.getElementById('franchiseStages');
+            
+            container.innerHTML = `
+                <div class="stage-circle">
+                    <div class="circle-value circle-micro">${franchise.micro}</div>
+                    <div>Micro</div>
+                </div>
+                <div class="stage-circle">
+                    <div class="circle-value circle-mini">${franchise.mini}</div>
+                    <div>Mini</div>
+                </div>
+                <div class="stage-circle">
+                    <div class="circle-value circle-max">${franchise.max}</div>
+                    <div>Max</div>
+                </div>
+            `;
+        }
+        
+        // Update pending stats
+        function updatePendingStats(data) {
+            const container = document.getElementById('pendingStats');
+            
+            container.innerHTML = `
+                <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                    <span>Fund Requests:</span>
+                    <span class="stat-value" style="font-size: 18px;">${data.pendingFunds || 0}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                    <span>Withdrawals:</span>
+                    <span class="stat-value" style="font-size: 18px;">${data.payouts.pending}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                    <span>Activations:</span>
+                    <span class="stat-value" style="font-size: 18px;">${data.pendingActivations || 0}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                    <span>Deliveries:</span>
+                    <span class="stat-value" style="font-size: 18px;">${data.deliveries.pending}</span>
+                </div>
+            `;
+        }
+        
+        // Update activities
+        function updateActivities(activities) {
+            const list = document.getElementById('activityList');
+            
+            if (!activities || activities.length === 0) {
+                list.innerHTML = '<div style="text-align: center;">No recent activities</div>';
+                return;
+            }
+            
+            list.innerHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-${activity.icon || 'bell'}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">${activity.message}</div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Update expiring alert
+        function updateExpiringAlert(count) {
+            document.getElementById('expiringCount').innerHTML = `${count} members`;
+        }
+        
+        // Change income period
+        function changeIncomePeriod(period) {
+            // Fetch new data based on period
+            loadDashboard();
+        }
+        
+        // View expiring members
+        function viewExpiring() {
+            window.location.href = '/all-member?filter=expiring';
+        }
+        
+        // View all activities
+        function viewAllActivities() {
+            // Show all activities modal or page
+        }
+        
+        // Refresh data
+        function refreshData() {
+            loadDashboard();
+        }
+        
+        // Export report
+        function exportReport() {
+            window.location.href = '/api/admin/export-report';
+        }
+        
+        // Show notifications
+        function showNotifications() {
+            alert('Notifications feature coming soon');
+        }
+        
+        // Logout
+        async function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/admin-login';
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (await checkAuth()) {
+                loadDashboard();
+                
+                // Auto refresh every 60 seconds
+                setInterval(loadDashboard, 60000);
+            }
+        });
+    </script>
+</body>
+</html>
