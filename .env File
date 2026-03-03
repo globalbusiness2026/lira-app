@@ -1,0 +1,7 @@
+MONGODB_URI=mongodb+srv://Lira_admin:Liravip1@cluster0.6yjlbz5.mongodb.net/lira_mlm_db?retryWrites=true&w=majority&appName=Cluster0
+PORT=5000
+JWT_SECRET=lira_super_secret_key_2026
+EMAIL_USER=gbusiness051@gmail.com
+EMAIL_PASS=wkfk tjck ndnp peoi
+SESSION_SECRET=lira_session_secret_2026
+BASE_URL=http://localhost:5000
