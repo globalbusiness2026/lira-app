@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Franchise Activity - LIRA Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .activity-container {
+            max-width: 1600px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            padding: 40px;
+            margin-bottom: 30px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .page-header::before {
+            content: '📊';
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 150px;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+        }
+        
+        .page-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            opacity: 0.9;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient-1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+        }
+        
+        .stat-content {
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+        
+        .trend-up {
+            color: var(--success);
+        }
+        
+        .trend-down {
+            color: var(--danger);
+        }
+        
+        .filter-section {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .filter-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--dark);
+        }
+        
+        .filter-select, .filter-input {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-select:focus, .filter-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+        
+        .date-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .date-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+        }
+        
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 12px 30px;
+            background: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+        
+        .tab-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .tab-btn.active {
+            background: var(--gradient-1);
+            color: white;
+        }
+        
+        .activity-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .activity-card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .activity-card.pending {
+            border-left: 4px solid var(--warning);
+        }
+        
+        .activity-card.delivered {
+            border-left: 4px solid var(--success);
+        }
+        
+        .activity-card.assigned {
+            border-left: 4px solid var(--info);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .franchise-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .franchise-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .franchise-name {
+            font-weight: 600;
+        }
+        
+        .franchise-id {
+            font-size: 11px;
+            color: var(--gray);
+        }
+        
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-assigned {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .delivery-details {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+        }
+        
+        .detail-label {
+            color: var(--gray);
+            font-size: 13px;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+        }
+        
+        .product-list {
+            margin: 15px 0;
+        }
+        
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        
+        .product-name {
+            font-size: 13px;
+        }
+        
+        .product-qty {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-1);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .track-btn {
+            background: var(--info);
+            color: white;
+        }
+        
+        .contact-btn {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+        
+        .map-container {
+            height: 200px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .map-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #f0f0f0 25%, #e0e0e0 25%, #e0e0e0 50%, #f0f0f0 50%, #f0f0f0 75%, #e0e0e0 75%, #e0e0e0 100%);
+            background-size: 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+        }
+        
+        .chart-section {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .summary-table {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+        
+        .summary-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .summary-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .summary-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .summary-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .rating-stars {
+            color: gold;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .page-btn:hover,
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 28px;
+            }
+            
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .date-range {
+                flex-direction: column;
+            }
+            
+            .activity-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs-container {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- Admin Navbar -->
+    <nav class="navbar" style="background: #1e1e2f;">
+        <div class="navbar-container">
+            <a href="/admin-dashboard" class="logo" style="color: white;">LIRA Admin</a>
+            <div class="mobile-menu-btn" style="color: white;">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="nav-menu">
+                <a href="/admin-dashboard" class="nav-link">Dashboard</a>
+                <a href="/admin-franchise" class="nav-link">Franchise</a>
+                <a href="/franchise-activity" class="nav-link active">Activity</a>
+                <a href="/delivery" class="nav-link">Delivery</a>
+                <a href="/payout" class="nav-link">Payouts</a>
+                <div class="nav-link" onclick="logout()" style="cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="activity-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Franchise Activity Dashboard</h1>
+            <p>Real-time tracking of all franchise deliveries and performance</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Franchise</label>
+                    <select class="filter-select" id="franchiseFilter" onchange="applyFilters()">
+                        <option value="all">All Franchise</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+                        <option value="all">All Status</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="in_transit">In Transit</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="failed">Failed</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Date Range</label>
+                    <div class="date-range">
+                        <input type="date" class="date-input" id="fromDate" onchange="applyFilters()">
+                        <span>to</span>
+                        <input type="date" class="date-input" id="toDate" onchange="applyFilters()">
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Search</label>
+                    <input type="text" class="filter-input" id="searchInput" placeholder="Order ID, Customer" onkeyup="applyFilters()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="switchTab('all')">All Activities</button>
+            <button class="tab-btn" onclick="switchTab('assigned')">Assigned</button>
+            <button class="tab-btn" onclick="switchTab('in_transit')">In Transit</button>
+            <button class="tab-btn" onclick="switchTab('delivered')">Delivered</button>
+            <button class="tab-btn" onclick="switchTab('failed')">Failed</button>
+        </div>
+
+        <!-- Activity Cards -->
+        <div class="activity-cards" id="activityCards"></div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination"></div>
+
+        <!-- Performance Chart -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <div class="chart-title">Delivery Performance</div>
+                <select onchange="changeChartPeriod(this.value)">
+                    <option value="7">Last 7 Days</option>
+                    <option value="30" selected>Last 30 Days</option>
+                    <option value="90">Last 90 Days</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <canvas id="deliveryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Franchise Performance Summary -->
+        <div class="summary-table">
+            <h3 style="margin-bottom: 20px;">Franchise Performance Summary</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Franchise</th>
+                        <th>Stage</th>
+                        <th>Total Deliveries</th>
+                        <th>Successful</th>
+                        <th>Failed</th>
+                        <th>Avg. Time</th>
+                        <th>Rating</th>
+                        <th>Earnings</th>
+                    </tr>
+                </thead>
+                <tbody id="performanceTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Delivery Tracking Modal -->
+    <div class="franchise-modal" id="trackingModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title">Live Tracking</div>
+                <div class="modal-close" onclick="closeTrackingModal()">&times;</div>
+            </div>
+            
+            <div class="map-container" id="liveMap">
+                <div class="map-placeholder">
+                    <i class="fas fa-map-marked-alt" style="font-size: 40px; margin-right: 10px;"></i>
+                    <span>Live map loading...</span>
+                </div>
+            </div>
+            
+            <div class="delivery-details" id="trackingDetails"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let currentPage = 1;
+        let deliveryChart = null;
+        
+        async function loadActivityData() {
+            try {
+                const franchise = document.getElementById('franchiseFilter').value;
+                const status = document.getElementById('statusFilter').value;
+                const fromDate = document.getElementById('fromDate').value;
+                const toDate = document.getElementById('toDate').value;
+                const search = document.getElementById('searchInput').value;
+                
+                let url = `/api/admin/franchise/activity?page=${currentPage}`;
+                if (franchise !== 'all') url += `&franchise=${franchise}`;
+                if (status !== 'all') url += `&status=${status}`;
+                if (fromDate) url += `&from=${fromDate}`;
+                if (toDate) url += `&to=${toDate}`;
+                if (search) url += `&search=${search}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                updateStats(data.stats);
+                updateActivityCards(data.activities);
+                updatePagination(data.totalPages, data.currentPage);
+                updatePerformanceTable(data.performance);
+                updateChart(data.chartData);
+                
+            } catch (error) {
+                console.error('Error loading activity:', error);
+            }
+        }
+        
+        function updateStats(stats) {
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-truck"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">${stats.totalDeliveries}</div>
+                        <div class="stat-label">Total Deliveries</div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> +12% from last month
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">${stats.successful}</div>
+                        <div class="stat-label">Successful</div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-chart-line"></i> ${stats.successRate}% success rate
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">${stats.pending}</div>
+                        <div class="stat-label">Pending</div>
+                        <div class="stat-trend trend-down">
+                            <i class="fas fa-exclamation-triangle"></i> Need attention
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-rupee-sign"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-value">₹${stats.totalEarnings}</div>
+                        <div class="stat-label">Total Earnings</div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> Paid to franchise
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function updateActivityCards(activities) {
+            const container = document.getElementById('activityCards');
+            
+            if (!activities || activities.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 50px;">No activities found</div>';
+                return;
+            }
+            
+            container.innerHTML = activities.map(a => `
+                <div class="activity-card ${a.status}">
+                    <div class="card-header">
+                        <div class="franchise-info">
+                            <div class="franchise-avatar">${a.franchiseName?.charAt(0)}</div>
+                            <div>
+                                <div class="franchise-name">${a.franchiseName}</div>
+                                <div class="franchise-id">${a.franchiseId}</div>
+                            </div>
+                        </div>
+                        <span class="status-badge status-${a.status}">${a.status}</span>
+                    </div>
+                    
+                    <div class="delivery-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Order ID:</span>
+                            <span class="detail-value">${a.orderId}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Customer:</span>
+                            <span class="detail-value">${a.customerName}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Address:</span>
+                            <span class="detail-value">${a.address}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Assigned:</span>
+                            <span class="detail-value">${new Date(a.assignedDate).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="product-list">
+                        ${a.products.map(p => `
+                            <div class="product-item">
+                                <span class="product-name">${p.name} x${p.quantity}</span>
+                                <span class="product-qty">₹${p.price * p.quantity}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    ${a.status === 'in_transit' ? `
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${a.progress || 60}%"></div>
+                        </div>
+                        <div class="detail-row">
+                            <span>Estimated arrival:</span>
+                            <span>${a.estimatedTime || '30 mins'}</span>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="action-buttons">
+                        <button class="action-btn track-btn" onclick="trackDelivery('${a.deliveryId}')">
+                            <i class="fas fa-map-marker-alt"></i> Track
+                        </button>
+                        <button class="action-btn contact-btn" onclick="contactFranchise('${a.franchiseId}')">
+                            <i class="fas fa-phone"></i> Contact
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function updatePerformanceTable(performance) {
+            const tbody = document.getElementById('performanceTable');
+            
+            tbody.innerHTML = performance.map(p => `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="franchise-avatar">${p.name?.charAt(0)}</div>
+                            <div>
+                                <div>${p.name}</div>
+                                <div style="font-size: 11px;">${p.userId}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="stage-badge stage-${p.stage}">${p.stage}</span></td>
+                    <td><strong>${p.totalDeliveries}</strong></td>
+                    <td>${p.successful} (${p.successRate}%)</td>
+                    <td>${p.failed}</td>
+                    <td>${p.avgTime} mins</td>
+                    <td>
+                        <div class="rating-stars">
+                            ${'★'.repeat(Math.floor(p.rating))}${'☆'.repeat(5-Math.floor(p.rating))}
+                            (${p.rating})
+                        </div>
+                    </td>
+                    <td><strong>₹${p.earnings}</strong></td>
+                </tr>
+            `).join('');
+        }
+        
+        function updateChart(chartData) {
+            const ctx = document.getElementById('deliveryChart').getContext('2d');
+            
+            if (deliveryChart) deliveryChart.destroy();
+            
+            deliveryChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [
+                        {
+                            label: 'Delivered',
+                            data: chartData.delivered,
+                            borderColor: '#10B981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Assigned',
+                            data: chartData.assigned,
+                            borderColor: '#F59E0B',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updatePagination(total, current) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            
+            for (let i = 1; i <= total; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${i === current ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.onclick = () => {
+                    currentPage = i;
+                    loadActivityData();
+                };
+                pagination.appendChild(btn);
+            }
+        }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('statusFilter').value = tab === 'all' ? 'all' : tab;
+            currentPage = 1;
+            loadActivityData();
+        }
+        
+        function applyFilters() {
+            currentPage = 1;
+            loadActivityData();
+        }
+        
+        function changeChartPeriod(period) {
+            loadActivityData();
+        }
+        
+        function trackDelivery(deliveryId) {
+            document.getElementById('trackingModal').classList.add('active');
+            // Load tracking data
+        }
+        
+        function closeTrackingModal() {
+            document.getElementById('trackingModal').classList.remove('active');
+        }
+        
+        function contactFranchise(franchiseId) {
+            window.location.href = `/admin-message?user=${franchiseId}`;
+        }
+        
+        async function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/admin-login';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadActivityData();
+        });
+    </script>
+</body>
+</html>
