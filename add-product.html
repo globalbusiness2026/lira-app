@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Product Management - LIRA Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .product-container {
+            max-width: 1600px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .page-title h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .page-title p {
+            color: var(--gray);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .action-btn {
+            padding: 12px 25px;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+        
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .tab-btn {
+            padding: 15px 40px;
+            background: white;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            flex: 1;
+        }
+        
+        .tab-btn:hover {
+            transform: translateY(-3px);
+        }
+        
+        .tab-btn.active {
+            background: var(--gradient-1);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Category Section */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+        
+        .category-form-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .category-list-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .calculation-preview {
+            background: linear-gradient(135deg, #f5f0ff 0%, #ffffff 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px dashed var(--primary);
+        }
+        
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .calc-row:last-child {
+            border-bottom: none;
+        }
+        
+        .calc-label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .calc-value {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+        
+        .category-item:hover {
+            background: #f8f9fa;
+            transform: translateX(10px);
+            border-radius: 15px;
+        }
+        
+        .category-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .category-info p {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        .category-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .cat-action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            border: none;
+            background: #f0f0f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cat-action-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        /* Product Section */
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+        
+        .product-form-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .product-list-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .price-breakdown {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+        
+        .final-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--success);
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed var(--primary);
+        }
+        
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .product-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .product-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .product-status {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .image-preview {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .preview-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--primary);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .upload-area:hover {
+            background: #f0e6ff;
+        }
+        
+        .upload-area i {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 992px) {
+            .categories-grid,
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- Admin Navbar -->
+    <nav class="navbar" style="background: #1e1e2f;">
+        <div class="navbar-container">
+            <a href="/admin-dashboard" class="logo" style="color: white;">LIRA Admin</a>
+            <div class="mobile-menu-btn" style="color: white;">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="nav-menu">
+                <a href="/admin-dashboard" class="nav-link" style="color: white;">Dashboard</a>
+                <a href="/all-member" class="nav-link" style="color: white;">Members</a>
+                <a href="/add-product" class="nav-link active" style="color: white;">Products</a>
+                <a href="/payout" class="nav-link" style="color: white;">Payouts</a>
+                <a href="/admin-franchise" class="nav-link" style="color: white;">Franchise</a>
+                <div class="nav-link" onclick="logout()" style="cursor: pointer; color: white;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="product-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Product & Category Management</h1>
+                <p>Manage categories, pricing rules, and products</p>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn" onclick="exportProducts()">
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <button class="action-btn" onclick="syncPrices()">
+                    <i class="fas fa-sync-alt"></i> Sync Prices
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="switchTab('categories')">
+                <i class="fas fa-tags"></i> Categories
+            </button>
+            <button class="tab-btn" onclick="switchTab('products')">
+                <i class="fas fa-box"></i> Products
+            </button>
+        </div>
+
+        <!-- Categories Tab -->
+        <div class="tab-content active" id="categoriesTab">
+            <div class="categories-grid">
+                <!-- Add Category Form -->
+                <div class="category-form-card">
+                    <h2 style="margin-bottom: 20px;">Add New Category</h2>
+                    
+                    <form id="categoryForm">
+                        <div class="form-group">
+                            <label class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="catName" placeholder="e.g., Gold, Silver" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Purchase Rate (per gram) ₹</label>
+                            <input type="number" class="form-control" id="purchaseRate" value="100" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label class="form-label">Expense %</label>
+                                <input type="number" class="form-control" id="expense" value="10" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Making %</label>
+                                <input type="number" class="form-control" id="making" value="10" step="0.1" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label class="form-label">Packing %</label>
+                                <input type="number" class="form-control" id="packing" value="25" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Delivery %</label>
+                                <input type="number" class="form-control" id="delivery" value="5" step="0.1" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">GST %</label>
+                            <input type="number" class="form-control" id="gst" value="5" step="0.1" required>
+                        </div>
+                        
+                        <!-- Live Preview -->
+                        <div class="calculation-preview">
+                            <h4 style="margin-bottom: 15px;">Price Calculation Preview (for 1 gram)</h4>
+                            <div class="calc-row">
+                                <span class="calc-label">Purchase Rate:</span>
+                                <span class="calc-value" id="previewPurchase">₹100.00</span>
+                            </div>
+                            <div class="calc-row">
+                                <span class="calc-label">Expense (10%):</span>
+                                <span class="calc-value" id="previewExpense">₹10.00</span>
+                            </div>
+                            <div class="calc-row">
+                                <span class="calc-label">Making (10%):</span>
+                                <span class="calc-value" id="previewMaking">₹10.00</span>
+                            </div>
+                            <div class="calc-row">
+                                <span class="calc-label">Packing (25%):</span>
+                                <span class="calc-value" id="previewPacking">₹25.00</span>
+                            </div>
+                            <div class="calc-row">
+                                <span class="calc-label">Delivery (5%):</span>
+                                <span class="calc-value" id="previewDelivery">₹5.00</span>
+                            </div>
+                            <div class="calc-row">
+                                <span class="calc-label">Subtotal:</span>
+                                <span class="calc-value" id="previewSubtotal">₹150.00</span>
+                            </div>
+                            <div class="calc-row">
+                                <span class="calc-label">GST (5%):</span>
+                                <span class="calc-value" id="previewGST">₹7.50</span>
+                            </div>
+                            <div class="calc-row" style="border-top: 2px solid var(--primary); margin-top: 10px; padding-top: 10px;">
+                                <span class="calc-label">Final Price (per gram):</span>
+                                <span class="calc-value" style="color: var(--success); font-size: 20px;" id="previewFinal">₹157.50</span>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Add Category</button>
+                    </form>
+                </div>
+                
+                <!-- Categories List -->
+                <div class="category-list-card">
+                    <h2 style="margin-bottom: 20px;">Existing Categories</h2>
+                    
+                    <div id="categoriesList">
+                        <!-- Categories will be loaded here -->
+                        <div class="loader"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div class="tab-content" id="productsTab">
+            <div class="product-grid">
+                <!-- Add Product Form -->
+                <div class="product-form-card">
+                    <h2 style="margin-bottom: 20px;">Add New Product</h2>
+                    
+                    <form id="productForm">
+                        <div class="form-group">
+                            <label class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="productName" placeholder="e.g., Gold Ring" required>
+                        </div>
+                        
+                        <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label class="form-label">Category</label>
+                                <select class="form-control" id="productCategory" required onchange="calculateProductPrice()">
+                                    <option value="">Select Category</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Weight (grams)</label>
+                                <input type="number" class="form-control" id="productWeight" value="1" step="0.01" min="0.01" oninput="calculateProductPrice()" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Purity</label>
+                            <select class="form-control" id="productPurity">
+                                <option value="24K">24K (99.9%)</option>
+                                <option value="22K">22K (91.6%)</option>
+                                <option value="18K">18K (75%)</option>
+                                <option value="14K">14K (58.5%)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="productDesc" rows="3"></textarea>
+                        </div>
+                        
+                        <!-- Price Breakdown (Auto-calculated) -->
+                        <div class="price-breakdown" id="priceBreakdown">
+                            <h4 style="margin-bottom: 15px;">Price Breakdown</h4>
+                            <div class="price-item">
+                                <span>Purchase Rate:</span>
+                                <span id="calcPurchase">₹0.00</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Expense:</span>
+                                <span id="calcExpense">₹0.00</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Making Charge:</span>
+                                <span id="calcMaking">₹0.00</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Packing Charge:</span>
+                                <span id="calcPacking">₹0.00</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Delivery Charge:</span>
+                                <span id="calcDelivery">₹0.00</span>
+                            </div>
+                            <div class="price-item">
+                                <span>GST:</span>
+                                <span id="calcGST">₹0.00</span>
+                            </div>
+                            <div class="final-price" id="finalPrice">₹0.00</div>
+                        </div>
+                        
+                        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label class="form-label">BV (Business Volume)</label>
+                                <input type="number" class="form-control" id="productBV" value="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">DP (Distributor Price)</label>
+                                <input type="number" class="form-control" id="productDP" value="80" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Stock Quantity</label>
+                            <input type="number" class="form-control" id="productStock" value="10" required>
+                        </div>
+                        
+                        <!-- Image Upload -->
+                        <div class="form-group">
+                            <label class="form-label">Product Images</label>
+                            <div class="upload-area" onclick="document.getElementById('productImages').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload images</p>
+                                <small>Max 5 images, JPG/PNG</small>
+                            </div>
+                            <input type="file" id="productImages" multiple accept="image/*" style="display: none;" onchange="previewImages(this)">
+                            <div class="image-preview" id="imagePreview"></div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Add Product</button>
+                    </form>
+                </div>
+                
+                <!-- Products List -->
+                <div class="product-list-card">
+                    <h2 style="margin-bottom: 20px;">Product Inventory</h2>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <input type="text" class="form-control" placeholder="Search products..." id="searchProduct">
+                    </div>
+                    
+                    <div style="overflow-x: auto;">
+                        <table class="product-table">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsList">
+                                <tr>
+                                    <td colspan="7" style="text-align: center;">
+                                        <div class="loader"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Category Modal -->
+    <div class="member-modal" id="editCategoryModal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px;">Edit Category</h2>
+            <form id="editCategoryForm">
+                <input type="hidden" id="editCatId">
+                <div class="form-group">
+                    <label class="form-label">Category Name</label>
+                    <input type="text" class="form-control" id="editCatName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Purchase Rate (per gram)</label>
+                    <input type="number" class="form-control" id="editPurchaseRate" step="0.01" required>
+                </div>
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Expense %</label>
+                        <input type="number" class="form-control" id="editExpense" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Making %</label>
+                        <input type="number" class="form-control" id="editMaking" step="0.1" required>
+                    </div>
+                </div>
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Packing %</label>
+                        <input type="number" class="form-control" id="editPacking" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Delivery %</label>
+                        <input type="number" class="form-control" id="editDelivery" step="0.1" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">GST %</label>
+                    <input type="number" class="form-control" id="editGst" step="0.1" required>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let categories = [];
+        let products = [];
+        
+        // Check authentication
+        async function checkAuth() {
+            const session = await fetch('/api/session').then(r => r.json());
+            if (!session.loggedIn || session.role !== 'admin') {
+                window.location.href = '/admin-login';
+                return false;
+            }
+            return true;
+        }
+        
+        // Switch tabs
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (tab === 'categories') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('categoriesTab').classList.add('active');
+                loadCategories();
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('productsTab').classList.add('active');
+                loadProducts();
+            }
+        }
+        
+        // Load categories
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/admin/categories');
+                const data = await response.json();
+                categories = data;
+                
+                const list = document.getElementById('categoriesList');
+                
+                if (!categories || categories.length === 0) {
+                    list.innerHTML = '<p style="text-align: center;">No categories found</p>';
+                    return;
+                }
+                
+                list.innerHTML = categories.map(cat => `
+                    <div class="category-item">
+                        <div class="category-info">
+                            <h3>${cat.name}</h3>
+                            <p>Purchase: ₹${cat.purchaseRate}/g | Making: ${cat.making}% | GST: ${cat.gst}%</p>
+                        </div>
+                        <div class="category-actions">
+                            <button class="cat-action-btn" onclick="editCategory('${cat._id}')" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="cat-action-btn" onclick="deleteCategory('${cat._id}')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="cat-action-btn" onclick="viewCategoryProducts('${cat.name}')" title="View Products">
+                                <i class="fas fa-box"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Update category dropdown in product form
+                updateCategoryDropdown();
+                
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+        
+        // Update category dropdown
+        function updateCategoryDropdown() {
+            const select = document.getElementById('productCategory');
+            select.innerHTML = '<option value="">Select Category</option>' + 
+                categories.map(cat => `<option value="${cat.name}" data-id="${cat._id}">${cat.name}</option>`).join('');
+        }
+        
+        // Live preview for category
+        document.querySelectorAll('#categoryForm input').forEach(input => {
+            input.addEventListener('input', updateCategoryPreview);
+        });
+        
+        function updateCategoryPreview() {
+            const purchase = parseFloat(document.getElementById('purchaseRate').value) || 0;
+            const expense = parseFloat(document.getElementById('expense').value) || 0;
+            const making = parseFloat(document.getElementById('making').value) || 0;
+            const packing = parseFloat(document.getElementById('packing').value) || 0;
+            const delivery = parseFloat(document.getElementById('delivery').value) || 0;
+            const gst = parseFloat(document.getElementById('gst').value) || 0;
+            
+            const expenseAmt = (purchase * expense / 100);
+            const makingAmt = (purchase * making / 100);
+            const packingAmt = (purchase * packing / 100);
+            const deliveryAmt = (purchase * delivery / 100);
+            const subtotal = purchase + expenseAmt + makingAmt + packingAmt + deliveryAmt;
+            const gstAmt = subtotal * gst / 100;
+            const final = subtotal + gstAmt;
+            
+            document.getElementById('previewPurchase').textContent = `₹${purchase.toFixed(2)}`;
+            document.getElementById('previewExpense').textContent = `₹${expenseAmt.toFixed(2)}`;
+            document.getElementById('previewMaking').textContent = `₹${makingAmt.toFixed(2)}`;
+            document.getElementById('previewPacking').textContent = `₹${packingAmt.toFixed(2)}`;
+            document.getElementById('previewDelivery').textContent = `₹${deliveryAmt.toFixed(2)}`;
+            document.getElementById('previewSubtotal').textContent = `₹${subtotal.toFixed(2)}`;
+            document.getElementById('previewGST').textContent = `₹${gstAmt.toFixed(2)}`;
+            document.getElementById('previewFinal').textContent = `₹${final.toFixed(2)}`;
+        }
+        
+        // Add category
+        document.getElementById('categoryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const categoryData = {
+                name: document.getElementById('catName').value,
+                purchaseRate: parseFloat(document.getElementById('purchaseRate').value),
+                expense: parseFloat(document.getElementById('expense').value),
+                making: parseFloat(document.getElementById('making').value),
+                packing: parseFloat(document.getElementById('packing').value),
+                deliveryCharge: parseFloat(document.getElementById('delivery').value),
+                gst: parseFloat(document.getElementById('gst').value)
+            };
+            
+            try {
+                const response = await fetch('/api/admin/categories', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(categoryData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Category added successfully');
+                    document.getElementById('categoryForm').reset();
+                    updateCategoryPreview();
+                    loadCategories();
+                } else {
+                    alert(data.error || 'Failed to add category');
+                }
+            } catch (error) {
+                console.error('Error adding category:', error);
+            }
+        });
+        
+        // Edit category
+        function editCategory(id) {
+            const category = categories.find(c => c._id === id);
+            if (!category) return;
+            
+            document.getElementById('editCatId').value = category._id;
+            document.getElementById('editCatName').value = category.name;
+            document.getElementById('editPurchaseRate').value = category.purchaseRate;
+            document.getElementById('editExpense').value = category.expense;
+            document.getElementById('editMaking').value = category.making;
+            document.getElementById('editPacking').value = category.packing;
+            document.getElementById('editDelivery').value = category.deliveryCharge;
+            document.getElementById('editGst').value = category.gst;
+            
+            document.getElementById('editCategoryModal').classList.add('active');
+        }
+        
+        // Update category
+        document.getElementById('editCategoryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('editCatId').value;
+            const categoryData = {
+                name: document.getElementById('editCatName').value,
+                purchaseRate: parseFloat(document.getElementById('editPurchaseRate').value),
+                expense: parseFloat(document.getElementById('editExpense').value),
+                making: parseFloat(document.getElementById('editMaking').value),
+                packing: parseFloat(document.getElementById('editPacking').value),
+                deliveryCharge: parseFloat(document.getElementById('editDelivery').value),
+                gst: parseFloat(document.getElementById('editGst').value)
+            };
+            
+            try {
+                const response = await fetch(`/api/admin/categories/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(categoryData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Category updated successfully');
+                    closeEditModal();
+                    loadCategories();
+                }
+            } catch (error) {
+                console.error('Error updating category:', error);
+            }
+        });
+        
+        // Delete category
+        async function deleteCategory(id) {
+            if (!confirm('Are you sure? This will affect all products in this category.')) return;
+            
+            try {
+                const response = await fetch(`/api/admin/categories/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Category deleted');
+                    loadCategories();
+                }
+            } catch (error) {
+                console.error('Error deleting category:', error);
+            }
+        }
+        
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editCategoryModal').classList.remove('active');
+        }
+        
+        // Calculate product price
+        function calculateProductPrice() {
+            const categoryName = document.getElementById('productCategory').value;
+            const weight = parseFloat(document.getElementById('productWeight').value) || 1;
+            
+            const category = categories.find(c => c.name === categoryName);
+            if (!category) return;
+            
+            const purchase = category.purchaseRate * weight;
+            const expense = purchase * category.expense / 100;
+            const making = purchase * category.making / 100;
+            const packing = purchase * category.packing / 100;
+            const delivery = purchase * category.deliveryCharge / 100;
+            const subtotal = purchase + expense + making + packing + delivery;
+            const gst = subtotal * category.gst / 100;
+            const final = subtotal + gst;
+            
+            document.getElementById('calcPurchase').textContent = `₹${purchase.toFixed(2)}`;
+            document.getElementById('calcExpense').textContent = `₹${expense.toFixed(2)}`;
+            document.getElementById('calcMaking').textContent = `₹${making.toFixed(2)}`;
+            document.getElementById('calcPacking').textContent = `₹${packing.toFixed(2)}`;
+            document.getElementById('calcDelivery').textContent = `₹${delivery.toFixed(2)}`;
+            document.getElementById('calcGST').textContent = `₹${gst.toFixed(2)}`;
+            document.getElementById('finalPrice').textContent = `₹${final.toFixed(2)}`;
+        }
+        
+        // Add product
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('name', document.getElementById('productName').value);
+            formData.append('category', document.getElementById('productCategory').value);
+            formData.append('weight', document.getElementById('productWeight').value);
+            formData.append('purity', document.getElementById('productPurity').value);
+            formData.append('description', document.getElementById('productDesc').value);
+            formData.append('bv', document.getElementById('productBV').value);
+            formData.append('dp', document.getElementById('productDP').value);
+            formData.append('stock', document.getElementById('productStock').value);
+            
+            // Add images
+            const images = document.getElementById('productImages').files;
+            for (let i = 0; i < images.length; i++) {
+                formData.append('images', images[i]);
+            }
+            
+            try {
+                const response = await fetch('/api/admin/products', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Product added successfully');
+                    document.getElementById('productForm').reset();
+                    document.getElementById('imagePreview').innerHTML = '';
+                    loadProducts();
+                }
+            } catch (error) {
+                console.error('Error adding product:', error);
+            }
+        });
+        
+        // Load products
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/admin/products');
+                const data = await response.json();
+                products = data;
+                
+                const tbody = document.getElementById('productsList');
+                
+                if (!products || products.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No products found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = products.map(product => `
+                    <tr>
+                        <td>
+                            <img src="${product.images?.[0] || 'https://via.placeholder.com/50'}" 
+                                 style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;">
+                        </td>
+                        <td>
+                            <strong>${product.name}</strong><br>
+                            <small>${product.productId}</small>
+                        </td>
+                        <td>${product.category}<br><small>${product.weight}g</small></td>
+                        <td>₹${product.price?.toLocaleString()}</td>
+                        <td>${product.stock}</td>
+                        <td>
+                            <span class="product-status status-${product.status}">
+                                ${product.status}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="table-btn" onclick="editProduct('${product.productId}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="table-btn" onclick="toggleProductStatus('${product.productId}')">
+                                    <i class="fas fa-${product.status === 'active' ? 'ban' : 'check'}"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+        
+        // Preview images
+        function previewImages(input) {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            
+            for (let file of input.files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'preview-img';
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Search products
+        document.getElementById('searchProduct').addEventListener('input', function(e) {
+            const search = e.target.value.toLowerCase();
+            const filtered = products.filter(p => 
+                p.name.toLowerCase().includes(search) || 
+                p.productId.toLowerCase().includes(search)
+            );
+            // Re-render filtered products
+        });
+        
+        // Export products
+        function exportProducts() {
+            window.location.href = '/api/admin/products/export';
+        }
+        
+        // Sync prices
+        function syncPrices() {
+            alert('Price synchronization started. All products will be updated based on current category rates.');
+            // Implement price sync logic
+        }
+        
+        // View category products
+        function viewCategoryProducts(category) {
+            switchTab('products');
+            document.getElementById('searchProduct').value = category;
+            // Filter products by category
+        }
+        
+        // Logout
+        async function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/admin-login';
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (await checkAuth()) {
+                updateCategoryPreview();
+                loadCategories();
+            }
+        });
+    </script>
+</body>
+</html>
