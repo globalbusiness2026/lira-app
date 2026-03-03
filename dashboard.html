@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Dashboard - LIRA</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Dashboard Specific Styles */
+        .welcome-banner {
+            background: var(--gradient-1);
+            border-radius: 30px;
+            padding: 40px;
+            color: white;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        .welcome-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .welcome-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .expiry-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50px;
+            font-size: 14px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .expiry-badge.warning {
+            background: rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+        }
+        
+        .expiry-badge.danger {
+            background: rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .action-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            border: 2px solid transparent;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+        
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .action-desc {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .stage-progress {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .stage-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .stage-indicator::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+        
+        .stage-point {
+            position: relative;
+            z-index: 2;
+            background: white;
+            padding: 0 10px;
+            text-align: center;
+        }
+        
+        .stage-dot {
+            width: 30px;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        
+        .stage-point.completed .stage-dot {
+            background: var(--success);
+        }
+        
+        .stage-point.current .stage-dot {
+            background: var(--primary);
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+        
+        .stage-name {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .stage-point.completed .stage-name {
+            color: var(--success);
+        }
+        
+        .stage-point.current .stage-name {
+            color: var(--primary);
+        }
+        
+        .recent-activities {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .activity-amount {
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        .monthly-wallet {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .month-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .month-box.active {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .month-box.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .month-name {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .month-amount {
+            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        .team-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .team-stat {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .welcome-title {
+                font-size: 24px;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stage-indicator {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .stage-point {
+                flex: 1 1 40%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="logo">LIRA</a>
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="nav-menu">
+                <a href="/dashboard" class="nav-link active">Dashboard</a>
+                <a href="/products" class="nav-link">Shop</a>
+                <a href="/team" class="nav-link">Team</a>
+                <a href="/income-history" class="nav-link">Income</a>
+                <a href="/franchise" class="nav-link">Franchise</a>
+                <a href="/member-message" class="nav-link">
+                    <i class="fas fa-comment"></i>
+                    <span class="message-badge" id="unreadCount">0</span>
+                </a>
+                <div class="nav-link" onclick="logout()" style="cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard Content -->
+    <div class="dashboard-container">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner" id="welcomeBanner">
+            <div class="welcome-content">
+                <h1 class="welcome-title" id="userName">Welcome back, User!</h1>
+                <p class="welcome-subtitle" id="userId">ID: Loading...</p>
+                <div class="expiry-badge" id="expiryBadge">
+                    <i class="far fa-clock"></i> <span id="expiryDate">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <div class="action-card" onclick="window.location.href='/fund-request'">
+                <div class="action-icon"><i class="fas fa-wallet"></i></div>
+                <div class="action-title">Add Fund</div>
+                <div class="action-desc">Add money to wallet</div>
+            </div>
+            <div class="action-card" onclick="window.location.href='/kart'">
+                <div class="action-icon"><i class="fas fa-shopping-cart"></i></div>
+                <div class="action-title">Shop Now</div>
+                <div class="action-desc">Buy products</div>
+            </div>
+            <div class="action-card" onclick="window.location.href='/withdrawal'">
+                <div class="action-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                <div class="action-title">Withdraw</div>
+                <div class="action-desc">Request payout</div>
+            </div>
+            <div class="action-card" onclick="window.location.href='/franchise'">
+                <div class="action-icon"><i class="fas fa-store"></i></div>
+                <div class="action-title">Franchise</div>
+                <div class="action-desc">Become a partner</div>
+            </div>
+            <div class="action-card" onclick="window.location.href='/profile'">
+                <div class="action-icon"><i class="fas fa-user"></i></div>
+                <div class="action-title">Profile</div>
+                <div class="action-desc">View & edit</div>
+            </div>
+            <div class="action-card" onclick="window.location.href='/tree'">
+                <div class="action-icon"><i class="fas fa-sitemap"></i></div>
+                <div class="action-title">Team Tree</div>
+                <div class="action-desc">View network</div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                <div class="stat-content">
+                    <div class="stat-label">Main Wallet</div>
+                    <div class="stat-value" id="mainWallet">₹0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-content">
+                    <div class="stat-label">12-Month Wallet</div>
+                    <div class="stat-value" id="twelveMonthWallet">₹0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-content">
+                    <div class="stat-label">Direct Team</div>
+                    <div class="stat-value" id="directCount">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-level-up-alt"></i></div>
+                <div class="stat-content">
+                    <div class="stat-label">Current Level</div>
+                    <div class="stat-value" id="currentLevel">1</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-rupee-sign"></i></div>
+                <div class="stat-content">
+                    <div class="stat-label">Total Income</div>
+                    <div class="stat-value" id="totalIncome">₹0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                <div class="stat-content">
+                    <div class="stat-label">Today's Income</div>
+                    <div class="stat-value" id="todayIncome">₹0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stage Progress -->
+        <div class="stage-progress" id="stageProgress">
+            <h3 style="margin-bottom: 20px;">Your Growth Journey</h3>
+            <div class="stage-indicator">
+                <div class="stage-point completed">
+                    <div class="stage-dot"><i class="fas fa-check"></i></div>
+                    <div class="stage-name">General</div>
+                </div>
+                <div class="stage-point" id="stageMicro">
+                    <div class="stage-dot">M</div>
+                    <div class="stage-name">Micro</div>
+                </div>
+                <div class="stage-point" id="stageMini">
+                    <div class="stage-dot">MI</div>
+                    <div class="stage-name">Mini</div>
+                </div>
+                <div class="stage-point" id="stageMax">
+                    <div class="stage-dot">MA</div>
+                    <div class="stage-name">Max</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Wallet -->
+        <div class="monthly-wallet">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3>12-Month Savings Plan</h3>
+                <span class="badge" style="background: var(--primary); color: white; padding: 5px 15px; border-radius: 50px;">
+                    Locked until maturity
+                </span>
+            </div>
+            <div class="month-grid" id="monthlyGrid">
+                <!-- Monthly boxes will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Team Preview -->
+        <div class="team-preview">
+            <div class="team-stat">
+                <h4 style="margin-bottom: 10px;">Left Team</h4>
+                <div style="font-size: 28px; font-weight: 700;" id="leftCount">0</div>
+                <div style="font-size: 14px; opacity: 0.8;">members</div>
+            </div>
+            <div class="team-stat" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <h4 style="margin-bottom: 10px;">Right Team</h4>
+                <div style="font-size: 28px; font-weight: 700;" id="rightCount">0</div>
+                <div style="font-size: 14px; opacity: 0.8;">members</div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="recent-activities">
+            <h3 style="margin-bottom: 20px;">Recent Activities</h3>
+            <div id="recentActivities">
+                <!-- Activities will be loaded here -->
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userData = null;
+        
+        // Check authentication
+        async function checkAuth() {
+            const session = await fetch('/api/session').then(r => r.json());
+            if (!session.loggedIn) {
+                window.location.href = '/login';
+                return false;
+            }
+            return true;
+        }
+        
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/dashboard/stats');
+                const data = await response.json();
+                userData = data;
+                
+                // Update welcome banner
+                document.getElementById('userName').textContent = `Welcome back, ${data.user.name}!`;
+                document.getElementById('userId').textContent = `ID: ${data.user.userId}`;
+                
+                // Update expiry badge
+                const expiryDate = new Date(data.user.expiryDate);
+                const today = new Date();
+                const daysLeft = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                
+                const expiryBadge = document.getElementById('expiryBadge');
+                const expirySpan = document.getElementById('expiryDate');
+                
+                if (daysLeft <= 7) {
+                    expiryBadge.className = 'expiry-badge danger';
+                    expirySpan.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Expires in ${daysLeft} days`;
+                } else if (daysLeft <= 15) {
+                    expiryBadge.className = 'expiry-badge warning';
+                    expirySpan.textContent = `Expires in ${daysLeft} days`;
+                } else {
+                    expiryBadge.className = 'expiry-badge';
+                    expirySpan.textContent = `Valid till ${expiryDate.toLocaleDateString()}`;
+                }
+                
+                // Update stats
+                document.getElementById('mainWallet').textContent = `₹${data.wallet.main.toLocaleString()}`;
+                document.getElementById('twelveMonthWallet').textContent = `₹${data.wallet.twelveMonth.toLocaleString()}`;
+                document.getElementById('directCount').textContent = data.stats.directCount;
+                document.getElementById('currentLevel').textContent = data.stats.level;
+                document.getElementById('totalIncome').textContent = `₹${data.stats.totalIncome.toLocaleString()}`;
+                document.getElementById('todayIncome').textContent = `₹${data.today.income.toLocaleString()}`;
+                document.getElementById('leftCount').textContent = data.user.leftCount || 0;
+                document.getElementById('rightCount').textContent = data.user.rightCount || 0;
+                
+                // Update stage
+                updateStage(data.user.franchiseStage);
+                
+                // Update monthly wallet
+                updateMonthlyWallet(data.wallet.monthly);
+                
+                // Load recent activities
+                loadRecentActivities();
+                
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+        
+        function updateStage(stage) {
+            document.querySelectorAll('.stage-point').forEach(el => {
+                el.classList.remove('completed', 'current');
+            });
+            
+            const stages = ['general', 'micro', 'mini', 'max'];
+            const currentIndex = stages.indexOf(stage);
+            
+            for (let i = 0; i <= currentIndex; i++) {
+                if (i === currentIndex) {
+                    document.getElementById(`stage${stages[i].charAt(0).toUpperCase() + stages[i].slice(1)}`).classList.add('current');
+                } else {
+                    document.getElementById(`stage${stages[i].charAt(0).toUpperCase() + stages[i].slice(1)}`).classList.add('completed');
+                }
+            }
+        }
+        
+        function updateMonthlyWallet(monthlyData) {
+            const grid = document.getElementById('monthlyGrid');
+            grid.innerHTML = '';
+            
+            const currentMonth = new Date().getMonth() + 1;
+            
+            monthlyData.forEach(month => {
+                const box = document.createElement('div');
+                box.className = `month-box ${month.locked ? 'locked' : ''} ${month.month === currentMonth ? 'active' : ''}`;
+                box.innerHTML = `
+                    <div class="month-name">Month ${month.month}</div>
+                    <div class="month-amount">₹${month.amount.toLocaleString()}</div>
+                `;
+                
+                if (!month.locked && month.month <= currentMonth) {
+                    box.onclick = () => transferToMain(month.month);
+                }
+                
+                grid.appendChild(box);
+            });
+        }
+        
+        async function loadRecentActivities() {
+            try {
+                const response = await fetch('/api/income-history?limit=10');
+                const data = await response.json();
+                
+                const activities = document.getElementById('recentActivities');
+                activities.innerHTML = '';
+                
+                if (data.incomes.length === 0) {
+                    activities.innerHTML = '<p style="text-align: center; color: var(--gray);">No recent activities</p>';
+                    return;
+                }
+                
+                data.incomes.forEach(income => {
+                    const item = document.createElement('div');
+                    item.className = 'activity-item';
+                    item.innerHTML = `
+                        <div class="activity-icon"><i class="fas fa-${income.type === 'level' ? 'layer-group' : 'rupee-sign'}"></i></div>
+                        <div class="activity-content">
+                            <div class="activity-title">${income.type.charAt(0).toUpperCase() + income.type.slice(1)} Income ${income.level ? '- Level ' + income.level : ''}</div>
+                            <div class="activity-time">${new Date(income.date).toLocaleString()}</div>
+                        </div>
+                        <div class="activity-amount ${income.status === 'lapsed' ? 'text-danger' : ''}">
+                            ${income.status === 'lapsed' ? 'Lapsed: ' : ''}₹${income.amount}
+                        </div>
+                    `;
+                    activities.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Error loading activities:', error);
+            }
+        }
+        
+        async function transferToMain(month) {
+            if (!confirm(`Transfer Month ${month} funds to main wallet?`)) return;
+            
+            try {
+                const response = await fetch('/api/wallet/transfer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ month })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert('Transfer successful!');
+                    loadDashboard();
+                }
+            } catch (error) {
+                console.error('Error transferring funds:', error);
+            }
+        }
+        
+        async function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/';
+            }
+        }
+        
+        // Load unread message count
+        async function loadUnreadCount() {
+            try {
+                const response = await fetch('/api/messages/unread/count');
+                const data = await response.json();
+                document.getElementById('unreadCount').textContent = data.count;
+            } catch (error) {
+                console.error('Error loading unread count:', error);
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (await checkAuth()) {
+                loadDashboard();
+                loadUnreadCount();
+                
+                // Refresh every 30 seconds
+                setInterval(loadDashboard, 30000);
+                setInterval(loadUnreadCount, 30000);
+            }
+        });
+    </script>
+</body>
+</html>
